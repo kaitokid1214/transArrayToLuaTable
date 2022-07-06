@@ -68,11 +68,15 @@ fs.readFile('./data.txt', 'utf8', (err, data) => {
         transToLuaTable();
 
         luaAcceptTable = JSON.stringify(luaAcceptTable);//trans result to json
-
-        luaAcceptTable = luaAcceptTable.replace(/\\/g, "");//remove \ in json
-        luaAcceptTable = luaAcceptTable.replace(/"/g, "");//remove " in json
+        const replaceResult = {
+            '\\' : '',
+            '"' : '',
+            '}' : "}'"
+        }
         luaAcceptTable = luaAcceptTable.replace(/:(?={)/g, "'");//replace after ':' is not equal to '{' become '
-        luaAcceptTable = luaAcceptTable.replace(/}/g, "}'");//replace } become }'
+        luaAcceptTable = luaAcceptTable.replace(/\\|"|}/g, (matched)=>{
+            return replaceResult[matched];
+        })//remove \ " and replace } become }' in json
         luaAcceptTable = luaAcceptTable.replace(/'$/g, "");//remove last string '
         // console.log(luaAcceptTable);
 
